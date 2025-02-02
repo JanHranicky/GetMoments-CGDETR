@@ -6,7 +6,6 @@ import os
 from moviepy.editor import VideoFileClip
 
 def extract_frames_with_timestamps(video_path):
-    """Extract evenly spaced frames and their corresponding timestamps."""
     cap = cv2.VideoCapture(video_path)
     frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     fps = cap.get(cv2.CAP_PROP_FPS)
@@ -33,22 +32,7 @@ def extract_frames_with_timestamps(video_path):
     cap.release()
     return time_indices, frames
 
-def plot_frames(frames):
-    # Plot the frames in sequence with no padding between them
-    plt.figure(figsize=(15, 5))
-    
-    for idx, frame in enumerate(frames):
-        plt.subplot(1, len(frames), idx + 1)
-        plt.imshow(frame)
-        plt.axis('off')  # Turn off axis
-    
-    # Adjust spacing to remove padding
-    plt.subplots_adjust(wspace=0, hspace=0)  # Remove horizontal and vertical space between subplots
-    plt.show()
-
-
 def plot_frames_and_curve(frames, timestamps, scores, folder, file):
-    # Create a figure with two rows: one for frames, one for the timeline curve
     fig = plt.figure(figsize=(15, 8))
     
     # Create subplots for the frames
@@ -66,18 +50,17 @@ def plot_frames_and_curve(frames, timestamps, scores, folder, file):
     max_score_time = timestamps[max_score_idx]
     ax_sub.plot(max_score_time, max_score, 'go', markersize=12, label=f"Max score timestamp: {2*max_score_idx:.2f}-{(2*max_score_idx+2):.2f}s")
 
-    ax_sub.set_xlim(min(timestamps), max(timestamps))  # Align with timestamps
+    ax_sub.set_xlim(min(timestamps), max(timestamps))  
     ax_sub.set_xlabel("Time (seconds)")
-    ax_sub.set_yticks([])  # Hide Y-axis ticks for better visual clarity
+    ax_sub.set_yticks([])
     ax_sub.legend()
     
-    # Adjust spacing to remove padding between images and the timeline plot
-    plt.subplots_adjust(wspace=0, hspace=-0.2)  # Leave space below for the timeline plot
+    plt.subplots_adjust(wspace=0, hspace=-0.2)
     
     save_path = os.path.join(folder, f"{file}_saliency.png")
     
-    plt.savefig(save_path, dpi=300)  # Save at high resolution
-    plt.close(fig)  # Close the figure after saving
+    plt.savefig(save_path, dpi=300)
+    plt.close(fig)
 
 
 PREDICTION_DICTS = [
@@ -93,7 +76,6 @@ def load_pickle(file_path):
         return pickle.load(f)
 
 def extract_video_clip_with_audio(video_path, start_time, end_time, output_path):
-    # Open the video file using moviepy for easier handling of both video and audio
     video_clip = VideoFileClip(video_path,target_resolution=(1920,1080))
     
     start_time = max(start_time,0)
